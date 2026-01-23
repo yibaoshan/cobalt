@@ -317,8 +317,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
     });
 
     app.get('/', (_, res) => {
-        res.type('json');
-        res.status(200).send(env.envFile ? getServerInfo() : serverInfo);
+        res.status(404).end();
     })
 
     app.get('/favicon.ico', (req, res) => {
