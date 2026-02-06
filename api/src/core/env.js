@@ -131,6 +131,9 @@ export const loadEnvs = (env = process.env) => {
         envFile: env.API_ENV_FILE,
         envRemoteReloadInterval: 300,
 
+        proxyParseOnly: env.COBALT_PROXY_PARSE_ONLY === '1'
+            || env.COBALT_PROXY_PARSE_ONLY === 'true',
+
         subscribe,
     };
 }

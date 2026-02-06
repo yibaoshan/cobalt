@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { randomBytes } from "crypto";
 import { strict as assert } from "assert";
 import { setMaxListeners } from "node:events";
+import { Agent } from "undici";
 
 import { env } from "../config.js";
 import { closeRequest } from "./shared.js";
@@ -17,6 +18,7 @@ const freebind = env.freebindCIDR && await import('freebind').catch(() => {});
 const streamCache = new Store('streams');
 
 const internalStreamCache = new Map();
+const directAgent = new Agent();
 
 export function createStream(obj) {
     const streamID = nanoid(),
@@ -142,6 +144,9 @@ export function createInternalStream(url, obj = {}, isSubtitles) {
     let dispatcher = obj.dispatcher;
     if (obj.requestIP) {
         dispatcher = freebind?.dispatcherFromIP(obj.requestIP, { strict: false })
+    }
+    if (!dispatcher && env.proxyParseOnly) {
+        dispatcher = directAgent;
     }
 
     const streamID = nanoid();
