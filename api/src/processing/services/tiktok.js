@@ -17,7 +17,8 @@ export default async function(obj) {
             redirect: "manual",
             headers: {
                 "user-agent": genericUserAgent.split(' Chrome/1')[0]
-            }
+            },
+            dispatcher: obj.dispatcher
         }).then(r => r.text()).catch(() => {});
 
         if (!html) return { error: "fetch.fail" };
@@ -37,7 +38,8 @@ export default async function(obj) {
         headers: {
             "user-agent": genericUserAgent,
             cookie,
-        }
+        },
+        dispatcher: obj.dispatcher
     })
     updateCookie(cookie, res.headers);
 
