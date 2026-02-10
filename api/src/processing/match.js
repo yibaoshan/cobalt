@@ -107,7 +107,10 @@ export default async function({ host, patternMatch, params, authType }) {
                 break;
 
             case "bilibili":
-                r = await bilibili(patternMatch);
+                r = await bilibili({
+                    ...patternMatch,
+                    dispatcher
+                });
                 break;
 
             case "youtube":

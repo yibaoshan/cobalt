@@ -17,7 +17,7 @@ function extractBestQuality(dashData) {
     return [ bestVideo, bestAudio ];
 }
 
-async function com_download(id, partId) {
+async function com_download(id, partId, dispatcher) {
     const url = new URL(`https://bilibili.com/video/${id}`);
 
     if (partId) {
@@ -27,7 +27,8 @@ async function com_download(id, partId) {
     const html = await fetch(url, {
         headers: {
             "user-agent": genericUserAgent
-        }
+        },
+        dispatcher
     })
     .then(r => r.text())
     .catch(() => {});
@@ -65,7 +66,7 @@ async function com_download(id, partId) {
     };
 }
 
-async function tv_download(id) {
+async function tv_download(id, dispatcher) {
     const url = new URL(
         'https://api.bilibili.tv/intl/gateway/web/playurl'
         + '?s_locale=en_US&platform=web&qn=64&type=0&device=wap'
@@ -74,7 +75,7 @@ async function tv_download(id) {
 
     url.searchParams.set('aid', id);
 
-    const { data } = await fetch(url).then(a => a.json());
+    const { data } = await fetch(url, { dispatcher }).then(a => a.json());
     if (!data?.playurl?.video) {
         return { error: "fetch.empty" };
     }
@@ -100,16 +101,16 @@ async function tv_download(id) {
     };
 }
 
-export default async function({ comId, tvId, comShortLink, partId }) {
+export default async function({ comId, tvId, comShortLink, partId, dispatcher }) {
     if (comShortLink) {
-        const patternMatch = await resolveRedirectingURL(`https://b23.tv/${comShortLink}`);
+        const patternMatch = await resolveRedirectingURL(`https://b23.tv/${comShortLink}`, dispatcher);
         comId = patternMatch?.comId;
     }
 
     if (comId) {
-        return com_download(comId, partId);
+        return com_download(comId, partId, dispatcher);
     } else if (tvId) {
-        return tv_download(tvId);
+        return tv_download(tvId, dispatcher);
     }
 
     return { error: "fetch.fail" };
