@@ -147,6 +147,7 @@ export const services = {
         patterns: [
             ":user/video/:postId",
             "i18n/share/video/:postId",
+            "video/:postId",
             ":shortLink",
             "t/:shortLink",
             ":user/photo/:postId",
